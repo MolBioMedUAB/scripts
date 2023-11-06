@@ -1,6 +1,8 @@
 #!/home/mcanyelles/miniconda3/envs/pyenv/bin/python
 # -*- coding: utf-8 -*-
 
+# TODO check Fe and O
+
 # Import packages
 from parmed import load_file
 from MDAnalysis import Universe
@@ -269,21 +271,21 @@ def topology_adapter(args):
     if args.rename_atoms_MCPB == None and (len(heterotypes_in) > 0 or len(metals_in) > 0):
 
         translator = {
-            'NE'  : 'N',
-            'NZ'  : 'N',
-            'NE1' : 'N',
-            'NE2' : 'N',
-            'ND1' : 'N',
-            'ND2' : 'N',
+            'NE'  : 'N ',
+            'NZ'  : 'N ',
+            'NE1' : 'N  ',
+            'NE2' : 'N  ',
+            'ND1' : 'N  ',
+            'ND2' : 'N  ',
             'O'   : 'O',
-            'OW'  : 'O',
-            'OD1' : 'O',
-            'OD2' : 'O',
-            'OE1' : 'O',
-            'OE2' : 'O',
-            'OXT' : 'O',
-            'SG'  : 'S',
-            'SD'  : 'S',
+            'OW'  : 'O ',
+            'OD1' : 'O  ',
+            'OD2' : 'O  ',
+            'OE1' : 'O  ',
+            'OE2' : 'O  ',
+            'OXT' : 'O  ',
+            'SG'  : 'S ',
+            'SD'  : 'S ',
         }
 
         args.rename_atoms_MCPB = []
@@ -318,6 +320,7 @@ def topology_adapter(args):
         l_ = l_.replace('op', 'O ')
         l_ = l_.replace('os', 'O ')
         l_ = l_.replace('o ', 'O ')
+        l_ = l_.replace('oh', 'O ')
 
         l_ = l_.replace('Na+', 'NA+')
         l_ = l_.replace('Cl-', 'CL-')
