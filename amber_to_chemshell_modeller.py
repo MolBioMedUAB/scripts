@@ -1,4 +1,7 @@
+#!/home/mcanyelles/miniconda3/envs/pyenv/bin/python
 # -*- coding: utf-8 -*-
+
+# TODO check Fe and O
 
 # Import packages
 from parmed import load_file
@@ -24,7 +27,7 @@ def parser():
 
 
     parser.add_argument('-cs', '--crop_system',
-                        help="Trigger for activating the cropping of the system's solvent in a radius around a residue. If used, '-csc' has to be specified and '-csr' is optional with a default value of 17 Å.",
+                        help="Trigger for activating the cropping of the system's solvent in a radius around a residue. If used, '-csc' has to be specified and '-csr' is optional with a default value of 17 A",
                         action='store_true',
                         default=False,
                         required=False
@@ -95,12 +98,12 @@ def parser():
         sys.exit("If '-al' is activated, the center atom for creating the atoms list has to be specified with the '-alc' flag.")
 
     if args.rename_atoms and args.rename_atoms_MCPB == None:
-        print('ChemShell')
+        print('MCPB atom types will be automatically adapted to ChemShell atom types.')
 
     if args.output == None:
         args.output = args.parameters[:-7]
 
-
+    return args
 
 
 
@@ -151,12 +154,14 @@ def crop_topology(args):
 
     print('Cropped topology and coordinates have been saved as \'%s\', \'%s\' and \'%s\'' % (args.output + '.cropped.prmtop', args.output + '.cropped.inpcrd', args.output + '.cropped.pdb'))
 
+    args.parameters = args.output + '.cropped.prmtop'
+    args.coordinates = args.output + '.cropped.inpcrd'
     return args
 
 
 def create_active_atoms_list(args):
 
-    u_set_act = Universe(args.parameters)
+    u_set_act = Universe(args.parameters, args.coordinates)
 
     try :
         sel_carbon = str(u_set_act.select_atoms("bynum %s" % args.active_atoms_list_center))
@@ -224,7 +229,6 @@ def topology_adapter(args):
     new_types = []
     u = Universe(args.parameters)
 
-
     top    = open(args.parameters, 'r').readlines()
     top_out = open(str(args.parameters)[:-7] + '.mod.prmtop', 'w')
 
@@ -260,31 +264,37 @@ def topology_adapter(args):
                 metals_in.append(str(top[i])[loc:loc+3])
             except ValueError:
                 pass
+        
+    #print(heterotypes_in)
+    #print(metals_in)
 
     if args.rename_atoms_MCPB == None and (len(heterotypes_in) > 0 or len(metals_in) > 0):
 
         translator = {
-            'NE'  : 'N',
-            'NZ'  : 'N',
-            'NE1' : 'N',
-            'NE2' : 'N',
-            'ND1' : 'N',
-            'ND2' : 'N',
-            'OD1' : 'O',
-            'OD2' : 'O',
-            'OE1' : 'O',
-            'OE2' : 'O',
-            'OXT' : 'O',
-            'SG'  : 'S',
-            'SD'  : 'S',
+            'NE'  : 'N ',
+            'NZ'  : 'N ',
+            'NE1' : 'N  ',
+            'NE2' : 'N  ',
+            'ND1' : 'N  ',
+            'ND2' : 'N  ',
+            'O'   : 'O',
+            'OW'  : 'O ',
+            'OD1' : 'O  ',
+            'OD2' : 'O  ',
+            'OE1' : 'O  ',
+            'OE2' : 'O  ',
+            'OXT' : 'O  ',
+            'SG'  : 'S ',
+            'SD'  : 'S ',
         }
 
         args.rename_atoms_MCPB = []
         for t in heterotypes_in:
-            args.rename_atoms_MCPB.append(translator[u.select_atoms("type {t}").names[0]])
+     #       print(u.select_atoms(f"type {t}"))
+            args.rename_atoms_MCPB.append(translator[u.select_atoms(f"type {t}").names[0]])
 
         for t in metals_in:
-            args.rename_atoms_MCPB.append(u.select_atoms("type {t}").names[0])
+            args.rename_atoms_MCPB.append(u.select_atoms(f"type {t}").names[0])
 
 
     for l in range(0, initial):
@@ -310,6 +320,7 @@ def topology_adapter(args):
         l_ = l_.replace('op', 'O ')
         l_ = l_.replace('os', 'O ')
         l_ = l_.replace('o ', 'O ')
+        l_ = l_.replace('oh', 'O ')
 
         l_ = l_.replace('Na+', 'NA+')
         l_ = l_.replace('Cl-', 'CL-')
@@ -327,7 +338,7 @@ def topology_adapter(args):
     top_out.close()
 
     if args.rename_atoms_MCPB != None:
-        print("{len(args.rename_atoms_MCPB)} atom types from MCPB have been changed. ")
+        print(f"{len(args.rename_atoms_MCPB)} atom types from MCPB have been changed. ")
 
 
 
