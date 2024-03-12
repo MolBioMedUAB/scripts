@@ -271,21 +271,21 @@ def topology_adapter(args):
     if args.rename_atoms_MCPB == None and (len(heterotypes_in) > 0 or len(metals_in) > 0):
 
         translator = {
-            'NE'  : 'N ',
-            'NZ'  : 'N ',
+            'NE'  : 'N  ',
+            'NZ'  : 'N  ',
             'NE1' : 'N  ',
             'NE2' : 'N  ',
             'ND1' : 'N  ',
             'ND2' : 'N  ',
-            'O'   : 'O',
-            'OW'  : 'O ',
+            'O'   : 'O  ',
+            'OW'  : 'O  ',
             'OD1' : 'O  ',
             'OD2' : 'O  ',
             'OE1' : 'O  ',
             'OE2' : 'O  ',
             'OXT' : 'O  ',
-            'SG'  : 'S ',
-            'SD'  : 'S ',
+            'SG'  : 'S  ',
+            'SD'  : 'S  ',
         }
 
         args.rename_atoms_MCPB = []
