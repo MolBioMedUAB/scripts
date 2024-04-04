@@ -19,6 +19,12 @@ def parser():
                         required=False
                         )
 
+    parser.add_argument('-o', '--output',
+                        help='Name of the output files.',
+                        type=str,
+                        default=None
+                        )
+
     args = parser.parse_args()
   
     if args.rename_atoms_MCPB == None:
