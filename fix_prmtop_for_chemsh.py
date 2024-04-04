@@ -110,6 +110,8 @@ def topology_adapter(args):
         for t in metals_in:
             args.rename_atoms_MCPB.append(u.select_atoms(f"type {t}").names[0])
 
+    else :
+        print(f"{len(heterotypes_in)} atom type(s) of heteroatoms have been found. {len(metals_in)} metal(s) have been found. Be sure that {(len(heterotypes_in) + len(metals_in))} types are specified in -ram flag. If some are missing, they won't be fixed.")
 
     for l in range(0, initial):
         top_out.write(top[l])
