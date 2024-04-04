@@ -120,13 +120,13 @@ def topology_adapter(args):
         l_ = top[l].replace('hc', 'H ')
         l_ = l_.replace('ha', 'H ')
         l_ = l_.replace('h1', 'H ')
+        l_ = l_.replace('ho', 'H ')
 
         l_ = l_.replace('2C', 'C2')
         l_ = l_.replace('3C', 'C3')
 
         l_ = l_.replace('CO', 'C ')
         l_ = l_.replace('CX', 'C ')
-        l_ = l_.replace('c ', 'C ')
         l_ = l_.replace('c2', 'C ')
         l_ = l_.replace('c3', 'C ')
         l_ = l_.replace('cx', 'C ')
@@ -135,8 +135,10 @@ def topology_adapter(args):
 
         l_ = l_.replace('op', 'O ')
         l_ = l_.replace('os', 'O ')
-        l_ = l_.replace('o ', 'O ')
         l_ = l_.replace('oh', 'O ')
+
+        l_ = l_.replace('o ', 'O ')
+        l_ = l_.replace('c ', 'C ')
 
         l_ = l_.replace('Na+', 'NA+')
         l_ = l_.replace('Cl-', 'CL-')
@@ -144,7 +146,8 @@ def topology_adapter(args):
         l_ = l_.replace('Ca+', 'Ca+')
 
         for j in range(len(args.rename_atoms_MCPB)):
-            l_ = l_.replace((heterotypes_in + metals_in)[j], args.rename_atoms_MCPB[j])
+            whitespaces = (len((heterotypes_in + metals_in)[j]) - len(args.rename_atoms_MCPB[j]))*' '
+            l_ = l_.replace((heterotypes_in + metals_in)[j], args.rename_atoms_MCPB[j] + whitespaces)
 
         top_out.write(l_)
 
