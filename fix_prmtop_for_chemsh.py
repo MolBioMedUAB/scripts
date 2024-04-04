@@ -1,6 +1,9 @@
 
+from argparse import ArgumentParser
+
+
 def parser():
-    parser = ArgumentParser(description="Script to adapt AMBER topology and coordinates to be used in ChemShell.")
+    parser = ArgumentParser(description="Script to fix AMBER and MCP atom types in topology file to be used in ChemShell.")
 
     parser.add_argument('-p', '--parameters',
                         help='AMBER prmtop file containing topology and parameters of the system.',
@@ -149,3 +152,4 @@ def main():
   topology_adapter(args)
   print('prmtop fixed!')
   
+main()
