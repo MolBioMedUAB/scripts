@@ -29,6 +29,7 @@ def parser():
   
     if args.rename_atoms_MCPB == None:
         print('MCPB atom types will be automatically adapted to ChemShell atom types.')
+        from MDAnalysis import Universe
 
     if args.output == None:
         args.output = args.parameters[:-7]
