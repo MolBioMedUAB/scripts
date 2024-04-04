@@ -40,7 +40,6 @@ def parser():
 def topology_adapter(args):
 
     new_types = []
-    u = Universe(args.parameters)
 
     top    = open(args.parameters, 'r').readlines()
     top_out = open(str(args.parameters)[:-7] + '.mod.prmtop', 'w')
@@ -83,6 +82,8 @@ def topology_adapter(args):
 
     if args.rename_atoms_MCPB == None and (len(heterotypes_in) > 0 or len(metals_in) > 0):
 
+        u = Universe(args.parameters)
+        
         translator = {
             'NE'  : 'N ',
             'NZ'  : 'N ',
