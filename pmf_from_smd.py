@@ -8,7 +8,7 @@ plt.style.use('ggplot')
 
 def parser():
 
-    parser = argparse.ArgumentParser(description='Script for obtaining PMF profiles for multi-frame steered MDs simulatewd with AMBER.')
+    parser = argparse.ArgumentParser(description='Script for obtaining PMF profiles for multi-frame steered MDs simulated with AMBER.')
 
     """
     group = parser.add_mutually_exclusive_group(required=True)
