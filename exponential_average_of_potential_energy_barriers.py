@@ -56,7 +56,8 @@ if __name__ == '__main__':
 
 
     args = vars(parser.parse_args())
-    if len(args['barriers']) == 1 and ' ' in args['barriers']:
+    
+    if len(args['barriers']) and args['barriers'][0].find(' ') != -1:
         args['barriers'] = args['barriers'][0].split()
 
 
