@@ -56,7 +56,8 @@ if __name__ == '__main__':
 
 
     args = vars(parser.parse_args())
-    args['barriers'] = args['barriers'][0].split()
+    if len(args['barriers']) == 1 and ' ' in args['barriers']:
+        args['barriers'] = args['barriers'][0].split()
 
 
     print('The exponential barrier at %s K is:' % args['temperature'], round(calculate_exponential_average(args['temperature'], args['barriers']), 2), 'kcal/mol')
