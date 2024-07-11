@@ -121,6 +121,7 @@ def topology_adapter(args):
         l_ = l_.replace('ha', 'H ')
         l_ = l_.replace('h1', 'H ')
         l_ = l_.replace('ho', 'H ')
+        l_ = l_.replace('hO', 'H ')
 
         l_ = l_.replace('2C', 'C2')
         l_ = l_.replace('3C', 'C3')
