@@ -41,7 +41,10 @@ def argparser():
     parser.add_argument('--plot_opt', default=False, action='store_true', help='Plot SCF energy along the optimisation')
     parser.add_argument('-r', '--restart', default=False, action='store_true', help='Restart SCF calculation from checkpoint file')
 
-    parser.add_argument('-n', '--num_cores', type=int, default=vlx.environment.cpu_count(), help=f'Number of cores to use for the calculation (default is all available cores: {vlx.environment.cpu_count()})')
+    if 'OMP_NUM_THREADS' in list(os.environ):
+        parser.add_argument('-n', '--num_cores', type=int, default=int(os.environ['OMP_NUM_THREADS']), help=f'Number of cores to use for the calculation (OMP_NUM_THREADS has been set to {os.environ["OMP_NUM_THREADS"]})')
+    else :
+        parser.add_argument('-n', '--num_cores', type=int, default=vlx.environment.cpu_count(), help=f'Number of cores to use for the calculation (default is all available cores: {vlx.environment.cpu_count()})')
 
     #not implemented yet
     #parser.add_argument('--non_equivalent_atoms', type=bool, default=False, action='store_false', help='Deactivate automatic search of equivalent atoms for RESP fitting')
@@ -183,8 +186,13 @@ def main():
 
     #vlx.environment.set_omp_num_threads(str(args.num_cores))
 
-    if args.num_cores != vlx.environment.cpu_count():
-        os.system("export OMP_NUM_THREADS={args.num_cores}")
+    if 'OMP_NUM_THREADS' in list(os.environ):
+        if args.num_cores != int(os.environ['OMP_NUM_THREADS']):
+            print(f"Warning: OMP_NUM_THREADS is set to {os.environ['OMP_NUM_THREADS']}, but you are trying to set it to {args.num_cores}. {args.num_cores} will be used instead.")
+            os.system("export OMP_NUM_THREADS={args.num_cores}")
+    else :
+        if args.num_cores != vlx.environment.cpu_count():
+            os.system("export OMP_NUM_THREADS={args.num_cores}")
 
     print(args.opt_output)
 
