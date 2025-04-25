@@ -41,7 +41,7 @@ def argparser():
     parser.add_argument('--plot_opt', default=False, action='store_true', help='Plot SCF energy along the optimisation')
     parser.add_argument('-r', '--restart', default=False, action='store_true', help='Restart SCF calculation from checkpoint file')
 
-    #parser.add_argument('-n', '--num_cores', type=int, default=1, help='Number of cores to use for the calculation')
+    parser.add_argument('-n', '--num_cores', type=int, default=1, help='Number of cores to use for the calculation')
 
     #not implemented yet
     #parser.add_argument('--non_equivalent_atoms', type=bool, default=False, action='store_false', help='Deactivate automatic search of equivalent atoms for RESP fitting')
@@ -182,6 +182,9 @@ def main():
     #non_equiv = args.non_equivalent_atomsll
 
     #vlx.environment.set_omp_num_threads(str(args.num_cores))
+
+    if args.num_cores != vlx.environment.cpu_count():
+        os.system("export OMP_NUM_THREADS={args.num_cores}")
 
     print(args.opt_output)
 
