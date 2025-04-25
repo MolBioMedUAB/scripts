@@ -7,7 +7,7 @@ import argparse
 USAGE:
 
     Optimisation has not been implemented yet. Use another QM software to optimise the geometry of the molecule if needed and then use this script to get the RESP charges.
-    
+
 '''
 
 
@@ -25,6 +25,7 @@ def argparser():
 
 
     parser.add_argument('input', type=str, help='Input XYZ or PDB file')
+    parser.add_argument('-oo', '--opt_output', type=str, default=None, help='Optimisation geometry output file name')
     parser.add_argument('-c', '--charge', default=0, type=int, help='System\'s charge')
     parser.add_argument('-m', '--multiplicity', default=1, type=int, help='System\'s multiplicity')
     parser.add_argument('-m_opt',  '--method_opt',  type=str, default='B3LYP', choices=['HF'] + list(vlx.available_functionals()), help='QM method for optimisation')
@@ -32,15 +33,20 @@ def argparser():
     parser.add_argument('-b_opt',  '--basis_opt',  type=str, default='6-31G*', help='QM basis for optimisation')
     parser.add_argument('-b_resp', '--basis_resp',  type=str, default='6-31G*', help='QM basis for RESP calculation')
 
-    parser.add_argument('--no_opt', default=False, action='store_true', help='Deactivate geometry optimisation')
+    parser.add_argument('-no_opt', '--no_opt', default=False, action='store_true', help='Deactivate geometry optimisation')
     parser.add_argument('--plot_opt', default=False, action='store_true', help='Plot SCF energy along the optimisation')
     parser.add_argument('-r', '--restart', default=False, action='store_true', help='Restart SCF calculation from checkpoint file')
+
 
     #not implemented yet
     #parser.add_argument('--non_equivalent_atoms', type=bool, default=False, action='store_false', help='Deactivate automatic search of equivalent atoms for RESP fitting')
 
+    args = parser.parse_args()
 
-    return parser.parse_args()
+    if args.opt_output == None:
+        args.opt_output = args.input.split('.')[0] + '_opt.' + args.input.split('.')[1]
+
+    return args
 
 
 
@@ -59,8 +65,7 @@ def load_molecule(input, charge, mult):
     return molecule
 
 
-def optimize(molecule, xcfun='B3LYP', basis='6-31G*', max_iter=200, restart=False):
-
+def optimize(output, molecule, xcfun='B3LYP', basis='6-31G*', max_iter=200, restart=False):
 
     basis = vlx.MolecularBasis.read(molecule, basis, ostream=None)
     
@@ -69,16 +74,21 @@ def optimize(molecule, xcfun='B3LYP', basis='6-31G*', max_iter=200, restart=Fals
     else :
         scf_drv = vlx.ScfUnrestrictedDriver()
 
-    opt_drv = vlx.OptimizationDriver(scf_drv)
-
     if xcfun in vlx.available_functionals():
         scf_drv.xcfun = xcfun
 
+    scf_drv.max_iter = max_iter
+    scf_results = scf_drv.compute(molecule, basis)
+
+    opt_drv = vlx.OptimizationDriver(scf_drv)
     opt_drv.max_iter = max_iter
     opt_drv.checkpoint_file = 'opt.chkp'
 
-    opt_results = opt_drv.compute(molecule, basis, scf_drv)
-    
+    opt_results = opt_drv.compute(molecule, basis, scf_results)
+
+    with open(output, 'w') as optf:
+        optf.write(opt_results['opt_geometries'][-1])
+
     return opt_results
 
 
@@ -166,7 +176,17 @@ def main():
     #b_resp = args.basis_resp
     #non_equiv = args.non_equivalent_atomsll
 
+    print(args.opt_output)
+
     molecule = load_molecule(input, charge, mult)
+
+    if not args.no_opt:
+        opt_results = optimize(args.opt_output, molecule, m_opt, b_opt, restart=args.restart)
+        if args.plot_opt:
+            plot_scf_along_opt(opt_results)
+
+        molecule = load_molecule(args.opt_output, charge, mult)
+
     scf_results = get_scf(molecule, m_opt, b_opt)
 
     get_RESP(molecule, charge, mult, scf_results)
