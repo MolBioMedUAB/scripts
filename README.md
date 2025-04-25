@@ -8,6 +8,6 @@ Script for calculating RESP charges of a molecular system. The system can be opt
 Source: https://wires.onlinelibrary.wiley.com/doi/full/10.1002/wcms.1457
 
 ### TODO
-- [] Generate mol2 with GAFF atom types and frcmod with GAFF ff using antechamber/parmchk2
--  and parse RESP charges.
-- [] Test multiconformer RESP charge fitting
+- [ ] Generate mol2 with GAFF atom types and frcmod with GAFF ff using antechamber/parmchk2 and parse RESP charges.
+- [ ] Test multiconformer RESP charge fitting
+- [ ] Add automatic designation of equivalent Hs
