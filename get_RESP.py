@@ -8,6 +8,10 @@ USAGE:
 
     Optimisation has not been implemented yet. Use another QM software to optimise the geometry of the molecule if needed and then use this script to get the RESP charges.
 
+DEPENDENCIES INSTALLATION:
+    Follow instructions here: https://kthpanor.github.io/echem/docs/install.html
+    
+
 '''
 
 
