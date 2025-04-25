@@ -5,8 +5,8 @@ import argparse
 
 '''
 USAGE:
-
     Optimisation has not been implemented yet. Use another QM software to optimise the geometry of the molecule if needed and then use this script to get the RESP charges.
+    Number of cores can be set using the environment variable OMP_NUM_THREADS (export OMP_NUM_THREADS=n).
 
 DEPENDENCIES INSTALLATION:
     Follow instructions here: https://kthpanor.github.io/echem/docs/install.html
@@ -41,7 +41,7 @@ def argparser():
     parser.add_argument('--plot_opt', default=False, action='store_true', help='Plot SCF energy along the optimisation')
     parser.add_argument('-r', '--restart', default=False, action='store_true', help='Restart SCF calculation from checkpoint file')
 
-    parser.add_argument('-n', '--num_cores', type=int, default=1, help='Number of cores to use for the calculation')
+    #parser.add_argument('-n', '--num_cores', type=int, default=1, help='Number of cores to use for the calculation')
 
     #not implemented yet
     #parser.add_argument('--non_equivalent_atoms', type=bool, default=False, action='store_false', help='Deactivate automatic search of equivalent atoms for RESP fitting')
@@ -181,7 +181,7 @@ def main():
     #b_resp = args.basis_resp
     #non_equiv = args.non_equivalent_atomsll
 
-    vlx.environment.set_omp_num_threads(args.num_cores)
+    #vlx.environment.set_omp_num_threads(str(args.num_cores))
 
     print(args.opt_output)
 
