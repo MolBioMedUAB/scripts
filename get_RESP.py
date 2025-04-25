@@ -181,7 +181,7 @@ def main():
     #b_resp = args.basis_resp
     #non_equiv = args.non_equivalent_atomsll
 
-    vlx.environment.cset_omp_num_threads(args.num_cores)
+    vlx.environment.set_omp_num_threads(args.num_cores)
 
     print(args.opt_output)
 
