@@ -163,11 +163,11 @@ def get_RESP(molecule, charge, mult, scf_results, basis='6-31G*', xcfun='B3LYP')
 
     resp_charges = resp_drv.compute(molecule, basis, scf_results, "resp")
 
-    print("Atom     RESP charge")
+    print("Atom num\tAtom     RESP charge")
     print(20 * "-")
 
-    for label, resp_charge in zip(molecule.get_labels(), resp_charges):
-        print(f"{label :s} {resp_charge : 18.6f}")
+    for n, (label, resp_charge) in enumerate(zip(molecule.get_labels(), resp_charges)):
+        print(f"{n+1}\t\t{label :s} {resp_charge : 18.6f}")
 
     print(20 * "-")
 
