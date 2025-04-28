@@ -163,15 +163,23 @@ def get_RESP(molecule, charge, mult, scf_results, basis='6-31G*', xcfun='B3LYP')
 
     resp_charges = resp_drv.compute(molecule, basis, scf_results, "resp")
 
+    respf =  open('RESP_charges.txt', 'w')
+
     print("Atom num\tAtom     RESP charge")
     print(20 * "-")
 
+    respf.write("Atom num\tAtom     RESP charge"+'\n')
+    respf.write(20 * "-"+'\n')
+
     for n, (label, resp_charge) in enumerate(zip(molecule.get_labels(), resp_charges)):
         print(f"{n+1}\t\t{label :s} {resp_charge : 18.6f}")
+        respf.write(f"{n+1}\t\t{label :s} {resp_charge : 18.6f}\n")
 
     print(20 * "-")
+    respf.write(20 * "-"+'\n')
 
     print(f"Total: {resp_charges.sum() : 13.6f}")
+    print(f"Total: {resp_charges.sum() : 13.6f}\n")
 
 
 def main():
