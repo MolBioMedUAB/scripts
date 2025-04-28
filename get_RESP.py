@@ -30,12 +30,12 @@ def argparser():
 
     parser.add_argument('input', type=str, help='Input XYZ or PDB file')
     parser.add_argument('-oo', '--opt_output', type=str, default=None, help='Optimisation geometry output file name')
-    parser.add_argument('-c', '--charge', default=0, type=int, help='System\'s charge')
-    parser.add_argument('-m', '--multiplicity', default=1, type=int, help='System\'s multiplicity')
-    parser.add_argument('-m_opt',  '--method_opt',  type=str, default='B3LYP', choices=['HF'] + list(vlx.available_functionals()), help='QM method for optimisation')
-    parser.add_argument('-m_resp', '--method_resp', type=str, default='B3LYP', choices=['HF'] + list(vlx.available_functionals()), help='QM method for RESP calculation')
-    parser.add_argument('-b_opt',  '--basis_opt',  type=str, default='6-31G*', help='QM basis for optimisation')
-    parser.add_argument('-b_resp', '--basis_resp',  type=str, default='6-31G*', help='QM basis for RESP calculation')
+    parser.add_argument('-c', '--charge', default=0, type=int, help='System\'s charge [0]')
+    parser.add_argument('-m', '--multiplicity', default=1, type=int, help='System\'s multiplicity [1]')
+    parser.add_argument('-m_opt',  '--method_opt',  type=str, default='B3LYP', choices=['HF'] + list(vlx.available_functionals()), help='QM method for optimisation [B3LYP]')
+    parser.add_argument('-m_resp', '--method_resp', type=str, default='B3LYP', choices=['HF'] + list(vlx.available_functionals()), help='QM method for RESP calculation [B3LYP]')
+    parser.add_argument('-b_opt',  '--basis_opt',  type=str, default='6-31G*', help='QM basis for optimisation [6-31G*]')
+    parser.add_argument('-b_resp', '--basis_resp',  type=str, default='6-31G*', help='QM basis for RESP calculation [6-31G*]')
 
     parser.add_argument('-no_opt', '--no_opt', default=False, action='store_true', help='Deactivate geometry optimisation')
     parser.add_argument('--plot_opt', default=False, action='store_true', help='Plot SCF energy along the optimisation')
@@ -53,6 +53,9 @@ def argparser():
 
     if args.opt_output == None:
         args.opt_output = args.input.split('.')[0] + '_opt.' + args.input.split('.')[1]
+    elif '.' in args.opt_output and not args.opt_output.endswith('xyz'):
+        print("Only xyz extension is allowed for optimised structure. It will be automatically changed.")
+        args.opt_output = '.'.join(args.opt_output.split('.')[:-1]) + '.xyz'
 
     return args
 
@@ -180,8 +183,8 @@ def main():
     mult   = args.multiplicity
     m_opt  = args.method_opt
     b_opt  = args.basis_opt
-    #m_resp = args.method_resp
-    #b_resp = args.basis_resp
+    m_resp = args.method_resp
+    b_resp = args.basis_resp
     #non_equiv = args.non_equivalent_atomsll
 
     #vlx.environment.set_omp_num_threads(str(args.num_cores))
@@ -205,7 +208,7 @@ def main():
 
         molecule = load_molecule(args.opt_output, charge, mult)
 
-    scf_results = get_scf(molecule, m_opt, b_opt)
+    scf_results = get_scf(molecule, m_resp, b_resp)
 
     get_RESP(molecule, charge, mult, scf_results)
 
