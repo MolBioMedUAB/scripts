@@ -37,6 +37,8 @@ def argparser():
     parser.add_argument('-b_opt',  '--basis_opt',  type=str, default='6-31G*', help='QM basis for optimisation [6-31G*]')
     parser.add_argument('-b_resp', '--basis_resp',  type=str, default='6-31G*', help='QM basis for RESP calculation [6-31G*]')
 
+    parser.add_argument('-solv', '--implicit_solvent', action='store_true', default=False, help='Activates the usage of implicit solvent for optimisations')
+
     parser.add_argument('-no_opt', '--no_opt', default=False, action='store_true', help='Deactivate geometry optimisation')
     parser.add_argument('--plot_opt', default=False, action='store_true', help='Plot SCF energy along the optimisation')
     parser.add_argument('-r', '--restart', default=False, action='store_true', help='Restart SCF calculation from checkpoint file')
@@ -56,6 +58,8 @@ def argparser():
     elif '.' in args.opt_output and not args.opt_output.endswith('xyz'):
         print("Only xyz extension is allowed for optimised structure. It will be automatically changed.")
         args.opt_output = '.'.join(args.opt_output.split('.')[:-1]) + '.xyz'
+    elif '.' not in args.opt_output:
+        args.opt_output = args.opt_output + '.xyz'
 
     return args
 
@@ -76,7 +80,7 @@ def load_molecule(input, charge, mult):
     return molecule
 
 
-def optimize(output, molecule, xcfun='B3LYP', basis='6-31G*', max_iter=200, restart=False):
+def optimize(output, molecule, xcfun='B3LYP', basis='6-31G*', max_iter=200, restart=False, solvent=False):
 
     basis = vlx.MolecularBasis.read(molecule, basis, ostream=None)
     
@@ -89,6 +93,14 @@ def optimize(output, molecule, xcfun='B3LYP', basis='6-31G*', max_iter=200, rest
         scf_drv.xcfun = xcfun
 
     scf_drv.max_iter = max_iter
+
+    if solvent:
+        # Enable the CPCM solvent model for water
+        cpcm_drv = vlx.CpcmDriver()
+        cpcm_drv.solver.method = "direct"
+        cpcm_drv.solvent.dielectric_constant = 78.39
+        scf_drv.solvent_model = cpcm_drv
+    
     scf_results = scf_drv.compute(molecule, basis)
 
     opt_drv = vlx.OptimizationDriver(scf_drv)
