@@ -95,11 +95,9 @@ def optimize(output, molecule, xcfun='B3LYP', basis='6-31G*', max_iter=200, rest
     scf_drv.max_iter = max_iter
 
     if solvent:
-        # Enable the CPCM solvent model for water
-        cpcm_drv = vlx.CpcmDriver()
-        cpcm_drv.solver.method = "direct"
-        cpcm_drv.solvent.dielectric_constant = 78.39
-        scf_drv.solvent_model = cpcm_drv
+        scf_drv.solvation_model = 'cpcm'
+        scf_drv.cpcm_epsilon = 78.39  # water
+        scf_drv.filename = 'mol-cpcm'
     
     scf_results = scf_drv.compute(molecule, basis)
 
@@ -222,7 +220,7 @@ def main():
     molecule = load_molecule(input, charge, mult)
 
     if not args.no_opt:
-        opt_results = optimize(args.opt_output, molecule, m_opt, b_opt, restart=args.restart, solv=args.implicit_solvent)
+        opt_results = optimize(args.opt_output, molecule, m_opt, b_opt, restart=args.restart, solvent=args.implicit_solvent)
         
         if args.plot_opt:
             plot_scf_along_opt(opt_results)
