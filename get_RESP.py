@@ -222,7 +222,8 @@ def main():
     molecule = load_molecule(input, charge, mult)
 
     if not args.no_opt:
-        opt_results = optimize(args.opt_output, molecule, m_opt, b_opt, restart=args.restart)
+        opt_results = optimize(args.opt_output, molecule, m_opt, b_opt, restart=args.restart, solv=args.implicit_solvent)
+        
         if args.plot_opt:
             plot_scf_along_opt(opt_results)
 
